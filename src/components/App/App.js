@@ -17,7 +17,11 @@ class App extends React.Component {
   async getResults() {
     const theMovieDbInstance = theMovieDb()
     const defaultResponse = await theMovieDbInstance.getMulti({ query: this.state.query })
-    if (defaultResponse && defaultResponse.results) this.setState({ results: defaultResponse.results })
+    if (defaultResponse && defaultResponse.results) {
+      this.setState({ results: defaultResponse.results })
+    } else {
+      this.setState({ results: [] })
+    }
   }
 
   handleOnChange(e) {

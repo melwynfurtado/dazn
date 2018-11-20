@@ -17,7 +17,7 @@ function theMovieDbService (userConfig = {}, client = httpClient) {
   }
 
   function generateReqPath({ endpoint, query}) {
-    return `${config.baseUri}${endpoint}?api_key=${config.apiKey}&language=${config.language}&query=${query}`
+    return `${config.baseUri}${endpoint}?api_key=${config.apiKey}&language=${config.language}&query=${encodeURI(query)}`
   }
 
   // Public API
