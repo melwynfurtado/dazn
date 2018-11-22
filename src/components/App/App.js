@@ -1,6 +1,8 @@
 import React from 'react'
 import debounce from 'lodash/debounce'
-import theMovieDb from '../../services/theMovieDbService'
+import theMovieDbService from '../../services/theMovieDbService'
+import Search from '../Search'
+import MovieList from '../MovieList'
 import './App.scss'
 
 class App extends React.Component {
@@ -8,40 +10,56 @@ class App extends React.Component {
     super(props)
     this.state = {
       query: '',
+      queryChanged: false,
       results: []
     }
     this.handleOnChange = this.handleOnChange.bind(this)
     this.getResultsDebounced = debounce(this.getResults, 500)
   }
 
-  async getResults() {
-    const theMovieDbInstance = theMovieDb()
-    const defaultResponse = await theMovieDbInstance.getMulti({ query: this.state.query })
-    if (defaultResponse && defaultResponse.results) {
-      this.setState({ results: defaultResponse.results })
-    } else {
-      this.setState({ results: [] })
-    }
+  getResults() {
+    const theMovieDb = theMovieDbService()
+    
+    theMovieDb
+      .searchMovies({ query: this.state.query })
+      .then(({ data }) => {
+        this.setState({ 
+          results: data.results,
+          queryChanged: false,
+        })
+      })
+      .catch(error => {
+        this.setState({ 
+          results: [], 
+          queryChanged: false, 
+        }, () => {
+          console.error(error)
+        })
+      })
   }
 
   handleOnChange(e) {
-    this.setState({ query: e.target.value }, () => {
+    this.setState({ 
+      query: e.target.value,
+      queryChanged: true && e.target.value.length > 0,
+    }, () => {
       this.getResultsDebounced()
     })
   }
 
   render() {
-    const { results, query } = this.state
+    const { results, query, queryChanged } = this.state
 
     return (
       <div className="theMovieDb-search">
-      <h1>The Movie DB Search - DAZN</h1>
-      <input className="search-field" type="text" name="query" value={query} onChange={this.handleOnChange} />
-      <ul className="search-results">
-        {
-          results.map(m => <li key={m.id} className="item">{m.title || m.name}</li>)
+        <h1 className="heading">The Movie DB Search - DAZN</h1>
+        <Search handleOnChange={this.handleOnChange} query={query} />
+        { 
+          queryChanged ? 
+            <div className="loader"></div>
+          :
+            <MovieList movies={results} />
         }
-      </ul>
       </div>
     )
   }

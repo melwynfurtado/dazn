@@ -10,24 +10,21 @@ html, body, div, span, input, ul, li {
 .theMovieDb-search {
 	text-align: center;
 	font-size: 18px;
-
-	.search-field {
-		width: 90%;
-		height: 30px;
-		border-radius: 5px;
-		border: 1px solid lightgrey;
-		padding: 3px 10px;
-	}
-
-	.search-results {
-		text-align: left;
-		margin: 20px;
-		list-style: none;
-
-		.item {
-			padding: 10px;
-			border: 1px solid lightskyblue;
-			margin: 3px 0;
-		}
-	}
 }
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+.loader {
+	border: 5px solid #f3f3f3;
+	animation: spin 1s linear infinite;
+	border-top: 5px solid #555;
+	border-radius: 50%;
+	width: 30px;
+	height: 30px;
+	position: relative;
+	top: 30px;
+	left: 50%;
+}	
