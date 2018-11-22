@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Search Component renders correctly 1`] = `
+<input
+  className="search-field"
+  name="query"
+  onChange={[MockFunction]}
+  type="text"
+/>
+`;
