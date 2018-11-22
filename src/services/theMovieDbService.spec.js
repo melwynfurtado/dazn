@@ -1,34 +1,40 @@
 import theMovieDbService from './theMovieDbService'
-// import httpClient from '../clients/httpClient'
 
 describe('theMovieDbService', () => {
   it('should return theMovieDbService object', () => {
     expect(theMovieDbService()).toEqual(expect.objectContaining({
-      getMulti: expect.any(Function)
+      searchMovies: expect.any(Function)
     }))
   })
 
-  it('#getMulti should return multiple models in single request', async () => {
-    const httpClientMock = jest.fn(() => ({
-      get: () => {
-        return Promise.resolve({
-          json: () => {
-            return Promise.resolve({ results: [ 
-              {
-                title: 'Rambo',
-                id: 123,
-              } 
-            ]})
-          }
-        })
-      }
-    }))
+  it('#searchMovies should call get method on httpClient', () => {
+    const httpClientMockGet = jest.fn()
+    const httpClientMock = () => ({
+      get: httpClientMockGet
+    })
 
-    const response = await theMovieDbService({}, httpClientMock).getMulti('rambo')
-    const expected = [{
-      title: 'Rambo',
-      id: 123,      
-    }]
-    expect(response.results).toEqual(expected)
+    const query = 'rambo'
+    const apiKey = "fakeKey"
+    const baseUri = "https://api.fake.org"
+    
+    const expectedOptions = {
+      url: 'https://api.fake.org/search/movie',
+      params: {
+        query,
+        language: 'en-US',
+        api_key: apiKey,
+      }
+    }    
+
+    const tmd = theMovieDbService({ 
+      userConfig: { 
+        apiKey,
+        baseUri,
+      },
+      client: httpClientMock,
+    })
+    tmd.searchMovies({ query })
+    
+    expect(httpClientMockGet).toBeCalledWith(expectedOptions)
   })
 })

@@ -1,4 +1,6 @@
-// HTTP Client abstraction, currently implemented using Fetch API
+import axios from 'axios'
+
+// HTTP Client abstraction
 const httpClient = (function () {
   let client
 
@@ -6,9 +8,11 @@ const httpClient = (function () {
     if (client) return client
 
     client = {
-      get: reqPath => {
-        return fetch(reqPath)
-      }
+      get: options =>
+        axios({
+          method: 'get',
+          ...options
+        })
     }
 
     return client    
